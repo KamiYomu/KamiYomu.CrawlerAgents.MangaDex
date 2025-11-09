@@ -35,7 +35,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.0-rc1" />
+	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.0" />
 	  <PackageReference Include="System.Text.Json" Version="9.0.10" Pack="true" PackagePath="lib\$(TargetFramework)\" />
 	</ItemGroup>
 
