@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version: ${{ steps.extract_version.outputs.version }}
+      version: ${{ steps.set_outputs.outputs.version }}
+      is_prerelease: ${{ steps.set_outputs.outputs.is_prerelease }}
+      tag: ${{ steps.set_outputs.outputs.tag }}
 
     env:
       DOTNET_VERSION: '8.0.x'
