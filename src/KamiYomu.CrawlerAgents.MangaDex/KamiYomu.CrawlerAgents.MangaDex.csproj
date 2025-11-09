@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>13</LangVersion>
+		<Title>KamiYomu Crawler Agent – mangadex.org</Title>
+		<Description>A dedicated crawler agent for accessing public manga data from MangaDex. Built on KamiYomu.CrawlerAgents.Core, it enables efficient search, metadata extraction, and integration with the KamiYomu platform.
+		</Description>
+		<Copyright>© KamiYomu. Licensed under GPL-3.0.</Copyright>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<Authors>KamiYomu</Authors>
+		<PackageProjectUrl>https://github.com/KamiYomu/KamiYomu.CrawlerAgents.MangaDex</PackageProjectUrl>
+		<PackageTags>kamiyomu;crawler agents;manga download;MangaDex</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<IncludeSource>True</IncludeSource>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\README.md" Link="README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.0-rc1" />
+	  <PackageReference Include="System.Text.Json" Version="9.0.10" Pack="true" PackagePath="lib\$(TargetFramework)\" />
+	</ItemGroup>
+
+	<Import Project="KamiYomu.CrawlerAgents.MangaDex.props" />
+</Project>
