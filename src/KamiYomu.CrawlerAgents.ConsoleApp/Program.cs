@@ -61,7 +61,7 @@ try
     var chaptersResult = await crawler.GetChaptersAsync(mangaResult.Data.ElementAt(0), new PaginationOptions(0, 1, 30), CancellationToken.None);
     Thread.Sleep(1000);
     var count = chaptersResult?.Data.Count() ?? 0;
-    results.Add((nameof(ICrawlerAgent.GetChaptersAsync), !string.IsNullOrWhiteSpace(chaptersResult.Data.FirstOrDefault()?.Id), $"Returned {count} result(s)"));
+    results.Add((nameof(ICrawlerAgent.GetChaptersAsync), !string.IsNullOrWhiteSpace(chaptersResult?.Data.FirstOrDefault()?.Id), $"Returned {count} result(s)"));
 }
 catch (Exception ex)
 {

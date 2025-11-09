@@ -282,7 +282,6 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             var fallbackTitle = titleObj?.FirstOrDefault().Value?.ToString();
 
             // DESCRIPTION
-            string? descriptionValue = null;
             var descriptionObj = attributes?["description"]?.AsObject();
             var localizedDescription = descriptionObj?[_language]?.ToString();
             localizedDescription ??= descriptionObj?.FirstOrDefault(kvp => !string.IsNullOrEmpty(kvp.Value?.ToString())).Value?.ToString();
