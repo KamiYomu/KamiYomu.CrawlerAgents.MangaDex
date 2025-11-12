@@ -13,8 +13,7 @@
 		<PackageProjectUrl>https://github.com/KamiYomu/KamiYomu.CrawlerAgents.MangaDex</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/KamiYomu/KamiYomu.CrawlerAgents.MangaDex</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>kamiyomu;crawler-agents;manga-download;mangadex</PackageTags>
-		<PackageType>Analyzer;KamiYomuCrawlerAgent</PackageType>
+		<PackageTags>kamiyomu;kamiyomu-crawler-agents;manga-download;mangadex</PackageTags>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<Copyright>© KamiYomu. Licensed under GPL-3.0.</Copyright>
 		<PackageIconUrl>https://raw.githubusercontent.com/KamiYomu/KamiYomu.CrawlerAgents.MangaDex/main/src/KamiYomu.CrawlerAgents.MangaDex/Resources/logo.png</PackageIconUrl>
@@ -35,7 +34,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.0" />
+	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.1" />
 	  <PackageReference Include="System.Text.Json" Version="9.0.10" Pack="true" PackagePath="lib\$(TargetFramework)\" />
 	</ItemGroup>
 

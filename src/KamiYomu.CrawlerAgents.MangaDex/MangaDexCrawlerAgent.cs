@@ -234,15 +234,15 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             return pages;
         }
 
-        public static int ExtractPageNumber(string fileName)
+        public static decimal ExtractPageNumber(string fileName)
         {
             var dashIndex = fileName.IndexOf('-');
-            if (dashIndex > 0 && int.TryParse(fileName.Substring(0, dashIndex), out int pageNumber))
+            if (dashIndex > 0 && decimal.TryParse(fileName.Substring(0, dashIndex), out var pageNumber))
             {
                 return pageNumber;
             }
 
-            return 0;
+            return 0m;
         }
 
         private Manga ConvertToManga(JsonNode item, CancellationToken cancellationToken = default)
@@ -347,8 +347,8 @@ namespace KamiYomu.CrawlerAgents.MangaDex
                                         .WithParentManga(manga)
                                         .WithId(item?["id"]?.GetValue<string>() ?? "")
                                         .WithTitle(attributes?["title"]?.GetValue<string>() ?? "")
-                                        .WithVolume(int.TryParse(attributes?["volume"]?.GetValue<string>(), out var volume) ? volume : 0)
-                                        .WithNumber(int.TryParse(attributes?["chapter"]?.GetValue<string>(), out var number) ? number : 0)
+                                        .WithVolume(decimal.TryParse(attributes?["volume"]?.GetValue<string>(), out var volume) ? volume : 0m)
+                                        .WithNumber(decimal.TryParse(attributes?["chapter"]?.GetValue<string>(), out var number) ? number : 0m)
                                         .WithReleaseDate(attributes?["publishAt"]?.GetValue<DateTime>() ?? DateTime.MinValue)
                                         .WithTranslatedLanguage(attributes?["translatedLanguage"]?.ToString() ?? "")
                                         .WithPages(attributes?["pages"]?.GetValue<int?>().GetValueOrDefault(0) ?? 0)
