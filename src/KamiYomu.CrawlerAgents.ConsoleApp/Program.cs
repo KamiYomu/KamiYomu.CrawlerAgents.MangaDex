@@ -2,8 +2,8 @@
 using KamiYomu.CrawlerAgents.Core.Catalog;
 using KamiYomu.CrawlerAgents.MangaDex;
 using Spectre.Console;
-using System;
 
+#region startup
 AnsiConsole.MarkupLine("[bold underline green]KamiYomu AgentCrawler Validator[/]\n");
 
 var options = new Dictionary<string, object>()
@@ -13,8 +13,10 @@ var options = new Dictionary<string, object>()
 ICrawlerAgent crawler = new MangaDexCrawlerAgent(options);
 var results = new List<(string Method, bool Success, string Message)>();
 
-var mangaResult = await crawler.SearchAsync("The hole is open", new PaginationOptions(1, 30), CancellationToken.None);
-// Test GetFaviconAsync
+var mangaResult = await crawler.SearchAsync("One Piece", new PaginationOptions(1, 30), CancellationToken.None);
+#endregion
+
+#region Test GetFaviconAsync
 try
 {
     AnsiConsole.MarkupLine($"[bold underline green] Start Testing the method {nameof(ICrawlerAgent.GetFaviconAsync)}... [/]\n");
@@ -25,9 +27,9 @@ catch (Exception ex)
 {
     results.Add((nameof(ICrawlerAgent.GetFaviconAsync), false, ex.Message));
 }
+#endregion
 
-
-// Test SearchAsync
+#region Test SearchAsync
 try
 {
     AnsiConsole.MarkupLine($"[bold underline green] Start Testing the method {nameof(ICrawlerAgent.SearchAsync)}... [/]\n");
@@ -46,9 +48,9 @@ catch (Exception ex)
 {
     results.Add((nameof(ICrawlerAgent.SearchAsync), false, ex.Message));
 }
+#endregion
 
-
-// Test GetByIdAsync
+#region Test GetByIdAsync
 try
 {
     AnsiConsole.MarkupLine($"[bold underline green] Start Testing the method {nameof(ICrawlerAgent.GetByIdAsync)}... [/]\n");
@@ -67,9 +69,9 @@ catch (Exception ex)
 {
     results.Add((nameof(ICrawlerAgent.GetByIdAsync), false, ex.Message));
 }
+#endregion
 
-
-// Test GetChaptersAsync
+#region Test GetChaptersAsync
 try
 {
     AnsiConsole.MarkupLine($"[bold underline green] Start Testing the method {nameof(ICrawlerAgent.GetChaptersAsync)}... [/]\n");
@@ -93,16 +95,16 @@ catch (Exception ex)
 {
     results.Add((nameof(ICrawlerAgent.GetChaptersAsync), false, ex.Message));
 }
+#endregion
 
-
-// Test GetByteArrayAsync
+#region Test GetByteArrayAsync
 try
 {
     AnsiConsole.MarkupLine($"[bold underline green] Start Testing the method {nameof(HttpClient.GetByteArrayAsync)}... [/]\n");
     Thread.Sleep(1000);
-    var chaptersResult = await crawler.GetChaptersAsync(mangaResult.Data.ElementAt(0), new PaginationOptions(0, 1), CancellationToken.None);
+    var chaptersResult = await crawler.GetChaptersAsync(mangaResult.Data.First(), new PaginationOptions(0, 10), CancellationToken.None);
     Thread.Sleep(1000);
-    var chapterImages = await crawler.GetChapterPagesAsync(chaptersResult.Data.ElementAt(0), CancellationToken.None);
+    var chapterImages = await crawler.GetChapterPagesAsync(chaptersResult.Data.Last(), CancellationToken.None);
 
     using var httpClient = new HttpClient();
     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CrawlerAgentSettings.HttpUserAgent);
@@ -113,8 +115,9 @@ catch (Exception ex)
 {
     results.Add((nameof(HttpClient.GetByteArrayAsync), false, ex.Message));
 }
+#endregion
 
-// Display results
+#region Display results
 var table = new Table()
     .Title("[yellow]Test Results[/]")
     .Border(TableBorder.Rounded)
@@ -132,3 +135,4 @@ foreach (var (method, success, message) in results)
 }
 
 AnsiConsole.Write(table);
+#endregion
