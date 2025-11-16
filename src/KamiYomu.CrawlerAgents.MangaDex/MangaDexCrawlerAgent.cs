@@ -350,7 +350,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             var builder = ChapterBuilder.Create()
                                         .WithParentManga(manga)
                                         .WithId(item?["id"]?.GetValue<string>() ?? "")
-                                        .WithTitle(attributes?["title"]?.GetValue<string>() ?? "")
+                                        .WithTitle(attributes?["title"]?.GetValue<string>() ?? "Untitled Chapter")
                                         .WithVolume(decimal.TryParse(attributes?["volume"]?.GetValue<string>(), out var volume) ? volume : 0m)
                                         .WithNumber(decimal.TryParse(attributes?["chapter"]?.GetValue<string>(), out var number) ? number : 0m)
                                         .WithReleaseDate(attributes?["publishAt"]?.GetValue<DateTime>() ?? DateTime.MinValue)
