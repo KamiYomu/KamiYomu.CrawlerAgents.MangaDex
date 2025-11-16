@@ -309,15 +309,19 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             }
 
             var authorList = relationships?.Where(r => r?["type"]?.ToString() == "author").Select(p => p?["attributes"]?["name"]?.ToString());
-
+            var artistList = relationships?.Where(r => r?["type"]?.ToString() == "artist").Select(p => p?["attributes"]?["name"]?.ToString());
             var builder = MangaBuilder.Create();
             var mangaId = item?["id"]?.GetValue<string>();
             var coverFileName = relationships?.FirstOrDefault(r => r?["type"]?.ToString() == "cover_art")?["attributes"]?["fileName"]?.ToString();
+            var unsafeRatings = new[] { "erotica", "pornographic" };
+            var contentRating = attributes?["contentRating"]?.ToString();
+            var isFamilySafe = string.IsNullOrWhiteSpace(contentRating) || !unsafeRatings.Contains(contentRating, StringComparer.OrdinalIgnoreCase);
             builder.WithId(mangaId)
                    .WithTitle(!string.IsNullOrEmpty(localizedAltTitle) ? localizedAltTitle : fallbackTitle)
                    .WithAlternativeTitles(altTitleDict)
                    .WithAlternativeDescriptions(altDescriptionDict)
-                   .WithAuthors(authorList.ToArray())
+                   .WithAuthors([.. authorList])
+                   .WithArtists([.. artistList])
                    .WithDescription(localizedDescription ?? string.Empty)
                    .WithOriginalLanguage(attributes?["originalLanguage"]?.ToString())
                    .WithTags([.. tagList])
@@ -332,7 +336,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
                        _ => ReleaseStatus.Unreleased
                    })
                    .WithYear(attributes?["year"]?.GetValue<int?>() ?? 0)
-                   .WithContentRating(attributes?["contentRating"]?.ToString())
+                   .WithIsFamilySafe(isFamilySafe)
                    .WithWebsiteUrl($"https://mangadex.org/title/{mangaId}")
                    .WithCoverFileName(coverFileName)
                    .WithCoverUrl(!string.IsNullOrEmpty(coverFileName) ? new Uri($"https://uploads.mangadex.org/covers/{mangaId}/{coverFileName}") : null);

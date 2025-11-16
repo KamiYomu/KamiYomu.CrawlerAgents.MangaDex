@@ -34,8 +34,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.1" />
-	  <PackageReference Include="System.Text.Json" Version="9.0.10" Pack="true" PackagePath="lib\$(TargetFramework)\" />
+	  <PackageReference Include="KamiYomu.CrawlerAgents.Core" Version="1.1.3" />
+	  <PackageReference Include="System.Text.Json" Version="10.0.0" Pack="true" PackagePath="lib\$(TargetFramework)\" />
 	</ItemGroup>
 
 	<Import Project="KamiYomu.CrawlerAgents.MangaDex.props" />
