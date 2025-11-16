@@ -279,7 +279,8 @@ namespace KamiYomu.CrawlerAgents.MangaDex
 
             // TITLE
             var titleObj = attributes?["title"]?.AsObject();
-            var fallbackTitle = titleObj?.FirstOrDefault().Value?.ToString();
+            var fallbackTitle = !string.IsNullOrWhiteSpace(titleObj?.FirstOrDefault().Value?.ToString()) ? titleObj?.FirstOrDefault().Value?.ToString() 
+                                                                                                         : "Untitled Manga";
 
             // DESCRIPTION
             var descriptionObj = attributes?["description"]?.AsObject();
