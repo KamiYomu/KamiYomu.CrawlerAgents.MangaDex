@@ -2,6 +2,7 @@
 using KamiYomu.CrawlerAgents.Core.Catalog;
 using KamiYomu.CrawlerAgents.MangaDex;
 using Spectre.Console;
+using System;
 
 AnsiConsole.MarkupLine("[bold underline green]KamiYomu AgentCrawler Validator[/]\n");
 
@@ -12,7 +13,7 @@ var options = new Dictionary<string, object>()
 ICrawlerAgent crawler = new MangaDexCrawlerAgent(options);
 var results = new List<(string Method, bool Success, string Message)>();
 
-var mangaResult = await crawler.SearchAsync("Demon Slayer", new PaginationOptions(1, 30), CancellationToken.None);
+var mangaResult = await crawler.SearchAsync("The hole is open", new PaginationOptions(1, 30), CancellationToken.None);
 // Test GetFaviconAsync
 try
 {
@@ -38,6 +39,8 @@ try
     results.Add(($"{nameof(Manga.Description)} is not empty", !string.IsNullOrWhiteSpace(mangaResult.Data.ElementAt(0).Description), $"{mangaResult.Data.ElementAt(0).Description}"));
     results.Add(($"{nameof(Manga.WebSiteUrl)} is not empty", !string.IsNullOrWhiteSpace(mangaResult.Data.ElementAt(0).WebSiteUrl), $"{mangaResult.Data.ElementAt(0).WebSiteUrl}"));
     results.Add(($"{nameof(Manga.CoverFileName)} is not empty", !string.IsNullOrWhiteSpace(mangaResult.Data.ElementAt(0).CoverFileName), $"{mangaResult.Data.ElementAt(0).CoverFileName}"));
+    results.Add(($"{nameof(Manga.IsFamilySafe)} is not empty", true, $"{mangaResult.Data.ElementAt(0).IsFamilySafe}"));
+
 }
 catch (Exception ex)
 {
@@ -58,6 +61,7 @@ try
     results.Add(($"{nameof(Manga.Description)} is not empty", !string.IsNullOrWhiteSpace(manga.Description), $"{manga.Description}"));
     results.Add(($"{nameof(Manga.WebSiteUrl)} is not empty", !string.IsNullOrWhiteSpace(manga.WebSiteUrl), $"{manga.WebSiteUrl}"));
     results.Add(($"{nameof(Manga.CoverFileName)} is not empty", !string.IsNullOrWhiteSpace(manga.CoverFileName), $"{manga.CoverFileName}"));
+    results.Add(($"{nameof(Manga.IsFamilySafe)} is not empty", true, $"{manga.IsFamilySafe}"));
 }
 catch (Exception ex)
 {
