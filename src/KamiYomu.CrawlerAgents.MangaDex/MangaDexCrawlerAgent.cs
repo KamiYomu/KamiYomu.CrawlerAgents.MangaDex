@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace KamiYomu.CrawlerAgents.MangaDex
 {
     [DisplayName("KamiYomu Crawler Agent – mangadex.org")]
-    [CrawlerCheckBox("ContentRating", "The content rating for a series is based on the highest level of sexual content in the series", true, 2, ["safe", "suggestive", "erotica", "pornographic"])]
+    [CrawlerCheckBox("ContentRating", "The content rating for a series is based on the highest level of sexual content in the series", true, "safe", 2, ["safe", "suggestive", "erotica", "pornographic"])]
     [CrawlerSelect("Language", "Chapter Translation language, translated fields such as Titles and Descriptions", true, 1, [
         "en", "pt", "pt-br", "it", "de", "ru", "aa", "ab", "ae", "af", "ak", "am", "an", "ar-ae", "ar-bh", "ar-dz", "ar-eg", "ar-iq", "ar-jo", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-om",
         "ar-qa", "ar-sa", "ar-sy", "ar-tn", "ar-ye", "ar", "as", "av", "ay", "az", "ba", "be", "bg", "bh", "bi", "bm", "bn", "bo", "br", "bs", "ca", "ce", "ch", "co",
@@ -35,17 +35,12 @@ namespace KamiYomu.CrawlerAgents.MangaDex
     public class MangaDexCrawlerAgent : AbstractCrawlerAgent, ICrawlerAgent
     {
         private bool _disposed = false;
-        private HttpClient _httpClient;
+        private Lazy<HttpClient> _httpClient;
         private string _language = CultureInfo.CurrentCulture.Name;
 
         public MangaDexCrawlerAgent(IDictionary<string, object> options) : base(options)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://api.mangadex.org")
-            };
-
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CrawlerAgentSettings.HttpUserAgent);
+            _httpClient = new Lazy<HttpClient>(CreateHttpClient);
 
             if (Options.TryGetValue("Language", out var language) && language is string languageValue)
             {
@@ -55,6 +50,18 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             {
                 _language = "en";
             }
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://api.mangadex.org"),
+                Timeout = TimeSpan.FromMilliseconds(TimeoutMilliseconds)
+            };
+
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(HttpClientDefaultUserAgent);
+            return httpClient;
         }
 
         /// <inheritdoc/>
@@ -104,7 +111,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, queryBuilder.ToString());
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await _httpClient.Value.SendAsync(request, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
@@ -141,7 +148,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
            .Append($"&includes%5B%5D=tag");
 
             var request = new HttpRequestMessage(HttpMethod.Get, queryBuilder.ToString());
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await _httpClient.Value.SendAsync(request, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
@@ -167,7 +174,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
                                    .Append($"&contentRating%5B%5D=pornographic");
 
             var request = new HttpRequestMessage(HttpMethod.Get, queryBuilder.ToString());
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await _httpClient.Value.SendAsync(request, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
@@ -197,7 +204,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
             if (cancellationToken.IsCancellationRequested) return null;
 
             using var request = new HttpRequestMessage(HttpMethod.Get, chapter.Uri);
-            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            using var response = await _httpClient.Value.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             response.EnsureSuccessStatusCode();
 
@@ -279,7 +286,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
 
             // TITLE
             var titleObj = attributes?["title"]?.AsObject();
-            var fallbackTitle = !string.IsNullOrWhiteSpace(titleObj?.FirstOrDefault().Value?.ToString()) ? titleObj?.FirstOrDefault().Value?.ToString() 
+            var fallbackTitle = !string.IsNullOrWhiteSpace(titleObj?.FirstOrDefault().Value?.ToString()) ? titleObj?.FirstOrDefault().Value?.ToString()
                                                                                                          : "Untitled Manga";
 
             // DESCRIPTION
@@ -347,11 +354,12 @@ namespace KamiYomu.CrawlerAgents.MangaDex
         private Chapter ConvertToChapter(Manga manga, JsonNode item)
         {
             var attributes = item?["attributes"];
-
+            var titleStr = attributes?["title"]?.GetValue<string>();
+            var title = !string.IsNullOrWhiteSpace(titleStr) ? titleStr : "Untitled Chapter";
             var builder = ChapterBuilder.Create()
                                         .WithParentManga(manga)
                                         .WithId(item?["id"]?.GetValue<string>() ?? "")
-                                        .WithTitle(attributes?["title"]?.GetValue<string>() ?? "Untitled Chapter")
+                                        .WithTitle(title)
                                         .WithVolume(decimal.TryParse(attributes?["volume"]?.GetValue<string>(), out var volume) ? volume : 0m)
                                         .WithNumber(decimal.TryParse(attributes?["chapter"]?.GetValue<string>(), out var number) ? number : 0m)
                                         .WithReleaseDate(attributes?["publishAt"]?.GetValue<DateTime>() ?? DateTime.MinValue)
@@ -378,7 +386,10 @@ namespace KamiYomu.CrawlerAgents.MangaDex
 
             if (disposing)
             {
-                _httpClient?.Dispose();
+                if(_httpClient.IsValueCreated)
+                {
+                    _httpClient.Value.Dispose();
+                }
             }
             _disposed = true;
         }
