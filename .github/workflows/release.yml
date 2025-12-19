@@ -120,6 +120,12 @@ jobs:
             --password "${{ secrets.GH_KAMIYOMU_GITHUB_PACKAGE_PUBLISHER }}" \
             --store-password-in-clear-text
 
+      - name: Push package to BaGet.KamiYomu.com
+        run: |
+          dotnet nuget push "./nugetPackage/**/*.nupkg" \
+            --api-key "${{ secrets.GH_KAMIYOMU_BAGET_APIKEY }}" \
+            --source "${{ secrets.GH_KAMIYOMU_BAGET_URL }}" \
+            --skip-duplicate
 
       - name: Push package to GitHub Packages
         run: |
