@@ -65,6 +65,33 @@ namespace KamiYomu.CrawlerAgents.MangaDex
         }
 
         /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                if (_httpClient.IsValueCreated)
+                {
+                    _httpClient.Value.Dispose();
+                }
+            }
+            _disposed = true;
+        }
+
+        ~MangaDexCrawlerAgent()
+        {
+            Dispose(false);
+        }
+
+        /// <inheritdoc/>
         public Task<Uri> GetFaviconAsync(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return null;
@@ -91,7 +118,8 @@ namespace KamiYomu.CrawlerAgents.MangaDex
               .Append($"&includes%5B%5D=cover_art")
               .Append($"&includes%5B%5D=author")
               .Append($"&includes%5B%5D=artist")
-              .Append($"&includes%5B%5D=tag");
+              .Append($"&includes%5B%5D=tag")
+              .Append($"&availableTranslatedLanguage%5B%5D={_language}");
 
             if (Options.TryGetValue("ContentRating.safe", out var safe) && safe is bool safeValue && safeValue)
             {
@@ -372,32 +400,7 @@ namespace KamiYomu.CrawlerAgents.MangaDex
 
 
 
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (disposing)
-            {
-                if(_httpClient.IsValueCreated)
-                {
-                    _httpClient.Value.Dispose();
-                }
-            }
-            _disposed = true;
-        }
-
-        ~MangaDexCrawlerAgent()
-        {
-            Dispose(false);
-        }
+       
 
     }
 }

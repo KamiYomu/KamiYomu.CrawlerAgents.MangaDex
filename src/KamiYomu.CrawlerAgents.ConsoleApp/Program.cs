@@ -8,12 +8,12 @@ AnsiConsole.MarkupLine("[bold underline green]KamiYomu AgentCrawler Validator[/]
 
 var options = new Dictionary<string, object>()
 {
-    { "Language", "pt-br" }
+    { "Language", "fr" }
 };
 ICrawlerAgent crawler = new MangaDexCrawlerAgent(options);
 var results = new List<(string Method, bool Success, string Message)>();
 
-var mangaResult = await crawler.SearchAsync("One Piece", new PaginationOptions(1, 30), CancellationToken.None);
+var mangaResult = await crawler.SearchAsync("shrink", new PaginationOptions(0, 30), CancellationToken.None);
 #endregion
 
 #region Test GetFaviconAsync
