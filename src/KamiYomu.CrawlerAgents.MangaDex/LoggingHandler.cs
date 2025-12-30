@@ -10,11 +10,11 @@ public class LoggingHandler(ILogger logger, HttpMessageHandler innerHandler) : D
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        logger.LogDebug("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
+        logger?.LogDebug("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
 
         HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-        logger.LogDebug("Response: {StatusCode} {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+        logger?.LogDebug("Response: {StatusCode} {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
 
         return response;
     }
