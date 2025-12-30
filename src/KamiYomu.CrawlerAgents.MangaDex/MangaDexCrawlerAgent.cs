@@ -123,7 +123,7 @@ public class MangaDexCrawlerAgent : AbstractCrawlerAgent, ICrawlerAgent
         }
         if (Options.TryGetValue("ContentRating.suggestive", out object suggestive) && suggestive is bool suggestiveValue && suggestiveValue)
         {
-            _ = queryBuilder.Append($"&contentRating%5B%5D=safe");
+            _ = queryBuilder.Append($"&contentRating%5B%5D=suggestive");
         }
         if (Options.TryGetValue("ContentRating.erotica", out object erotica) && erotica is bool eroticaValue && eroticaValue)
         {
