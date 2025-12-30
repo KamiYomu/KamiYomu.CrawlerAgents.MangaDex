@@ -14,7 +14,13 @@ public class LoggingHandler(ILogger logger, HttpMessageHandler innerHandler) : D
 
         HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-        logger?.LogDebug("Response: {StatusCode} {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+        logger.LogDebug(
+            "HTTP {StatusCode} {Reason} | CT={ContentType} CL={ContentLength}",
+            (int)response.StatusCode,
+            response.ReasonPhrase,
+            response.Content?.Headers.ContentType?.MediaType,
+            response.Content?.Headers.ContentLength
+        );
 
         return response;
     }
