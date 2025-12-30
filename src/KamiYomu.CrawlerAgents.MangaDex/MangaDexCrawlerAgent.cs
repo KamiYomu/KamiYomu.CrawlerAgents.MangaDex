@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -42,16 +42,15 @@ public class MangaDexCrawlerAgent : AbstractCrawlerAgent, ICrawlerAgent
     public MangaDexCrawlerAgent(IDictionary<string, object> options) : base(options)
     {
         _httpClient = new Lazy<HttpClient>(CreateHttpClient);
-
         _language = Options.TryGetValue("Language", out object language) && language is string languageValue ? languageValue : "en";
     }
 
     private HttpClient CreateHttpClient()
     {
-        HttpClient httpClient = new()
+        HttpClient httpClient = new(new LoggingHandler(Logger, new HttpClientHandler()))
         {
             BaseAddress = new Uri("https://api.mangadex.org"),
-            Timeout = TimeSpan.FromMilliseconds(TimeoutMilliseconds)
+            Timeout = TimeSpan.FromMilliseconds(TimeoutMilliseconds),
         };
 
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(HttpClientDefaultUserAgent);

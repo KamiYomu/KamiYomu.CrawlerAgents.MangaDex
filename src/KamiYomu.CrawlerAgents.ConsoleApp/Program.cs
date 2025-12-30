@@ -2,14 +2,22 @@ using KamiYomu.CrawlerAgents.Core;
 using KamiYomu.CrawlerAgents.Core.Catalog;
 using KamiYomu.CrawlerAgents.MangaDex;
 
+using Microsoft.Extensions.Logging;
+
 using Spectre.Console;
 
 #region startup
 AnsiConsole.MarkupLine("[bold underline green]KamiYomu AgentCrawler Validator[/]\n");
-
+using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+{
+    _ = builder.AddConsole();
+});
+ILogger logger = loggerFactory.CreateLogger<Program>();
 Dictionary<string, object> options = new()
 {
-    { "Language", "fr" }
+    { CrawlerAgentSettings.DefaultInputs.KamiYomuILogger, logger },
+    { "Language", "fr" },
+
 };
 ICrawlerAgent crawler = new MangaDexCrawlerAgent(options);
 List<(string Method, bool Success, string Message)> results = [];
